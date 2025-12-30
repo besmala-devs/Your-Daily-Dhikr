@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Dhikr Tracker - متتبع الأذكار اليومية</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Verdana, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #1a1625 0%, #2d1b3d 50%, #1a1625 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+            color: rgb(255, 204, 221);
+           
+            
+        }
+
+        .header p {
+            color: #D8D9D4;
+            font-size: 1.1em;
+        }
+
+        .card {
+            background: rgba(42, 35, 48, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(246, 205, 168, 0.1);
+        }
+
+        .add-dhikr-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .add-dhikr-section input {
+            flex: 1;
+            padding: 14px;
+            background: rgba(60, 50, 70, 0.8);
+            border: 2px solid rgba(221, 198, 203, 0.3);
+            border-radius: 12px;
+            font-size: 16px;
+            color: white;
+            transition: all 0.3s;
+        }
+
+        .add-dhikr-section input:focus {
+            outline: none;
+            border-color: #D8D9D4;
+            background: rgba(60, 50, 70, 1);
+        }
+
+        .add-dhikr-section input::placeholder {
+            color: #D8D9D4;
+            opacity: 0.6;
+        }
+
+        .add-dhikr-section button {
+            padding: 14px 30px;
+            background: linear-gradient(135deg, #D8D9D4 0%, #DDC6CB 100%);
+            color: #1a1625;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(216, 217, 212, 0.3);
+        }
+
+        .add-dhikr-section button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(216, 217, 212, 0.5);
+            background: linear-gradient(135deg, #F6CDA8 0%, #F6CDA8 100%);
+        }
+
+        .dhikr-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .dhikr-item {
+            background: linear-gradient(135deg, rgba(246, 205, 168, 0.12) 0%, rgba(221, 198, 203, 0.12) 100%);
+            border-radius: 16px;
+            padding: 24px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s;
+            border: 1px solid rgba(221, 198, 203, 0.2);
+        }
+
+        .dhikr-item:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 40px rgba(221, 198, 203, 0.3);
+            border-color: rgba(221, 198, 203, 0.5);
+        }
+
+        .dhikr-name {
+            font-size: 1.3em;
+            font-weight: bold;
+            color: #F6CDA8;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .counter-display {
+            font-size: 3em;
+            font-weight: bold;
+            text-align: center;
+            background: linear-gradient(45deg, #F6CDA8, #DDC6CB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin: 20px 0;
+            filter: drop-shadow(0 0 20px rgba(246, 205, 168, 0.3));
+        }
+
+        .dhikr-buttons {
+            display: flex;
+            gap: 8px;
+            justify-content: center;
+            margin-bottom: 15px;
+        }
+
+        .count-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .increment-btn {
+            background: linear-gradient(135deg, #D8D9D4 0%, #F6CDA8 100%);
+            color: #1a1625;
+            box-shadow: 0 4px 15px rgba(216, 217, 212, 0.3);
+        }
+
+        .increment-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(216, 217, 212, 0.5);
+        }
+
+        .reset-btn {
+            background: linear-gradient(135deg, #DDC6CB 0%, #D8D9D4 100%);
+            color: #1a1625;
+            box-shadow: 0 4px 15px rgba(221, 198, 203, 0.3);
+        }
+
+        .reset-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(221, 198, 203, 0.5);
+        }
+
+        .delete-btn {
+            background: linear-gradient(135deg, #DDC6CB 0%, #875D71 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(135, 93, 113, 0.3);
+        }
+
+        .delete-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(135, 93, 113, 0.5);
+        }
+
+        .today-total {
+            text-align: center;
+            color: #D8D9D4;
+            font-size: 14px;
+            margin-top: 10px;
+            opacity: 0.8;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            background: rgba(60, 50, 70, 0.6);
+            border: 2px solid rgba(221, 198, 203, 0.2);
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            color: #D8D9D4;
+        }
+
+        .tab:hover {
+            background: rgba(60, 50, 70, 0.8);
+            border-color: rgba(221, 198, 203, 0.4);
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, #D8D9D4 0%, #DDC6CB 100%);
+            color: #1a1625;
+            border-color: transparent;
+            box-shadow: 0 4px 15px rgba(216, 217, 212, 0.4);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .history-item {
+            background: rgba(60, 50, 70, 0.6);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            border-left: 4px solid #D8D9D4;
+            border: 1px solid rgba(221, 198, 203, 0.3);
+        }
+
+        .date-header {
+            font-weight: bold;
+            color: #F6CDA8;
+            margin-bottom: 12px;
+            font-size: 1.1em;
+        }
+
+        .dhikr-history {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(221, 198, 203, 0.2);
+            color: #D8D9D4;
+        }
+
+        .dhikr-history:last-child {
+            border-bottom: none;
+        }
+
+        .chart-container {
+            width: 100%;
+            height: 350px;
+            margin-top: 25px;
+            background: rgba(60, 50, 70, 0.4);
+            border-radius: 12px;
+            padding: 20px;
+            border: 1px solid rgba(221, 198, 203, 0.2);
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(246, 205, 168, 0.15) 0%, rgba(221, 198, 203, 0.15) 100%);
+            color: white;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+            border: 1px solid rgba(221, 198, 203, 0.3);
+            transition: all 0.3s;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(221, 198, 203, 0.3);
+        }
+
+        .stat-value {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin: 10px 0;
+            background: linear-gradient(45deg, #F6CDA8, #DDC6CB);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .stat-label {
+            font-size: 0.95em;
+            color: #D8D9D4;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #875D71;
+        }
+
+        .empty-state h3 {
+            color: #D8D9D4;
+            margin: 20px 0 10px;
+            font-size: 1.5em;
+        }
+
+        .empty-state p {
+            margin: 5px 0;
+            color: #D8D9D4;
+            opacity: 0.7;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤲 متتبع الأذكار اليومية</h1>
+            <h1>بسملة دوّادي 🤍</h1>
+            <p>Daily Dhikr Tracker</p>
+        </div>
+
+        <div class="card">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('counter')">العداد / Counter</button>
+                <button class="tab" onclick="switchTab('history')">السجل / History</button>
+                <button class="tab" onclick="switchTab('progress')">التقدم / Progress</button>
+            </div>
+
+            <!-- Counter Tab -->
+            <div id="counter-tab" class="tab-content active">
+                <div class="add-dhikr-section">
+                    <input type="text" id="dhikr-input" placeholder="أضف ذكر جديد / Add new dhikr..." onkeypress="if(event.key==='Enter') addDhikr()">
+                    <button onclick="addDhikr()">➕ إضافة</button>
+                </div>
+
+                <div id="dhikr-list" class="dhikr-list"></div>
+            </div>
+
+            <!-- History Tab -->
+            <div id="history-tab" class="tab-content">
+                <div id="history-content"></div>
+            </div>
+
+            <!-- Progress Tab -->
+            <div id="progress-tab" class="tab-content">
+                <div class="stats-grid" id="stats-grid"></div>
+                <div class="chart-container">
+                    <canvas id="chart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script>
+        let dhikrData = {};
+        let history = {};
+        let chart = null;
+
+        // Load data from localStorage
+        function loadData() {
+            const saved = localStorage.getItem('dhikrData');
+            const savedHistory = localStorage.getItem('dhikrHistory');
+            
+            if (saved) dhikrData = JSON.parse(saved);
+            if (savedHistory) history = JSON.parse(savedHistory);
+            
+            renderDhikrList();
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('dhikrData', JSON.stringify(dhikrData));
+            localStorage.setItem('dhikrHistory', JSON.stringify(history));
+        }
+
+        // Get today's date as string
+        function getTodayDate() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        // Add new dhikr
+        function addDhikr() {
+            const input = document.getElementById('dhikr-input');
+            const name = input.value.trim();
+            
+            if (!name) {
+                alert('الرجاء إدخال اسم الذكر / Please enter dhikr name');
+                return;
+            }
+
+            if (dhikrData[name]) {
+                alert('هذا الذكر موجود بالفعل / This dhikr already exists');
+                return;
+            }
+
+            dhikrData[name] = {
+                count: 0,
+                totalToday: 0
+            };
+
+            input.value = '';
+            saveData();
+            renderDhikrList();
+        }
+
+        // Increment counter
+        function incrementCount(name) {
+            dhikrData[name].count++;
+            dhikrData[name].totalToday++;
+            
+            // Save to history
+            const today = getTodayDate();
+            if (!history[today]) history[today] = {};
+            if (!history[today][name]) history[today][name] = 0;
+            history[today][name]++;
+
+            saveData();
+            renderDhikrList();
+        }
+
+        // Reset counter for specific dhikr
+        function resetCount(name) {
+            if (confirm(`هل تريد إعادة تعيين العداد؟ / Reset counter for ${name}?`)) {
+                dhikrData[name].count = 0;
+                saveData();
+                renderDhikrList();
+            }
+        }
+
+        // Delete dhikr
+        function deleteDhikr(name) {
+            if (confirm(`هل تريد حذف هذا الذكر؟ / Delete ${name}?`)) {
+                delete dhikrData[name];
+                saveData();
+                renderDhikrList();
+            }
+        }
+
+        // Render dhikr list
+        function renderDhikrList() {
+            const container = document.getElementById('dhikr-list');
+            
+            if (Object.keys(dhikrData).length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4em;">🤲</div>
+                        <h3>لا توجد أذكار بعد</h3>
+                        <p>أضف ذكرك الأول لتبدأ!</p>
+                        <p>No dhikr yet. Add your first one to start!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = Object.keys(dhikrData).map(name => {
+                const data = dhikrData[name];
+                return `
+                    <div class="dhikr-item">
+                        <div class="dhikr-name">${name}</div>
+                        <div class="counter-display">${data.count}</div>
+                        <div class="dhikr-buttons">
+                            <button class="count-btn increment-btn" onclick="incrementCount('${name}')">
+                                ➕ عد
+                            </button>
+                            <button class="count-btn reset-btn" onclick="resetCount('${name}')">
+                                🔄 إعادة
+                            </button>
+                            <button class="count-btn delete-btn" onclick="deleteDhikr('${name}')">
+                                🗑️
+                            </button>
+                        </div>
+                        <div class="today-total">اليوم / Today: ${data.totalToday}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Switch tabs
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+
+            if (tabName === 'history') renderHistory();
+            if (tabName === 'progress') renderProgress();
+        }
+
+        // Render history
+        function renderHistory() {
+            const container = document.getElementById('history-content');
+            const dates = Object.keys(history).sort().reverse();
+
+            if (dates.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div style="font-size: 4em;">📅</div>
+                        <h3>لا يوجد سجل بعد</h3>
+                        <p>No history yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = dates.map(date => {
+                const dayData = history[date];
+                const total = Object.values(dayData).reduce((sum, val) => sum + val, 0);
+                
+                return `
+                    <div class="history-item">
+                        <div class="date-header">📅 ${date} - المجموع / Total: ${total}</div>
+                        ${Object.keys(dayData).map(name => `
+                            <div class="dhikr-history">
+                                <span>${name}</span>
+                                <strong>${dayData[name]}</strong>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // Render progress
+        function renderProgress() {
+            renderStats();
+            renderChart();
+        }
+
+        // Render statistics
+        function renderStats() {
+            const container = document.getElementById('stats-grid');
+            
+            const totalDays = Object.keys(history).length;
+            const totalDhikr = Object.values(history).reduce((sum, day) => 
+                sum + Object.values(day).reduce((s, v) => s + v, 0), 0
+            );
+            const todayTotal = dhikrData ? Object.values(dhikrData).reduce((sum, d) => sum + d.totalToday, 0) : 0;
+            const avgPerDay = totalDays > 0 ? Math.round(totalDhikr / totalDays) : 0;
+
+            container.innerHTML = `
+                <div class="stat-card">
+                    <div class="stat-label">المجموع الكلي / Total</div>
+                    <div class="stat-value">${totalDhikr}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">اليوم / Today</div>
+                    <div class="stat-value">${todayTotal}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">الأيام / Days</div>
+                    <div class="stat-value">${totalDays}</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">المتوسط / Average</div>
+                    <div class="stat-value">${avgPerDay}</div>
+                </div>
+            `;
+        }
+
+        // Render chart
+        function renderChart() {
+            const canvas = document.getElementById('chart');
+            const ctx = canvas.getContext('2d');
+
+            if (chart) chart.destroy();
+
+            const dates = Object.keys(history).sort().slice(-30);
+            
+            if (dates.length === 0) {
+                return;
+            }
+
+            const allDhikr = new Set();
+            dates.forEach(date => {
+                Object.keys(history[date]).forEach(name => allDhikr.add(name));
+            });
+
+            const colors = [
+                '#F6CDA8', '#F6CDA8', '#D8D9D4', '#DDC6CB',
+                '#DDC6CB', '#875D71', '#F6CDA8', '#D8D9D4'
+            ];
+
+            const datasets = Array.from(allDhikr).map((name, index) => ({
+                label: name,
+                data: dates.map(date => history[date][name] || 0),
+                borderColor: colors[index % colors.length],
+                backgroundColor: colors[index % colors.length] + '30',
+                tension: 0.4,
+                fill: true,
+                borderWidth: 2
+            }));
+
+            chart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: dates,
+                    datasets: datasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: true,
+                    aspectRatio: 2.5,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            labels: {
+                                color: '#D8D9D4',
+                                padding: 15,
+                                font: {
+                                    size: 12
+                                }
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: 'آخر 30 يوم / Last 30 Days Progress',
+                            color: '#F6CDA8',
+                            font: {
+                                size: 16,
+                                weight: 'bold'
+                            },
+                            padding: 20
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            ticks: {
+                                color: '#D8D9D4'
+                            },
+                            grid: {
+                                color: 'rgba(221, 198, 203, 0.1)'
+                            }
+                        },
+                        x: {
+                            ticks: {
+                                color: '#D8D9D4',
+                                maxRotation: 45,
+                                minRotation: 45
+                            },
+                            grid: {
+                                color: 'rgba(221, 198, 203, 0.1)'
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Reset daily counts at midnight
+        function checkAndResetDaily() {
+            const lastReset = localStorage.getItem('lastReset');
+            const today = getTodayDate();
+
+            if (lastReset !== today) {
+                Object.keys(dhikrData).forEach(name => {
+                    dhikrData[name].totalToday = 0;
+                });
+                localStorage.setItem('lastReset', today);
+                saveData();
+            }
+        }
+
+        // Initialize
+        loadData();
+        checkAndResetDaily();
+        setInterval(checkAndResetDaily, 60000);
+    </script>
+</body>
+</html>
